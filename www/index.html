@@ -1,0 +1,1041 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14293B">
+<meta name="color-scheme" content="light dark">
+<meta name="application-name" content="Pipe Calculator">
+<title>Pipe Calculator</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+html{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font:14px system-ui,sans-serif}
+img{max-width:100%}
+[hidden]{display:none!important}
+
+@font-face{font-family:'IBM Plex Sans Thai';font-style:normal;font-display:swap;font-weight:400;src:url(fonts/ibm-plex-sans-thai-thai-400-normal.woff2) format('woff2');unicode-range:U+0E01-0E5B,U+200C-200D,U+25CC}
+@font-face{font-family:'IBM Plex Sans Thai';font-style:normal;font-display:swap;font-weight:400;src:url(fonts/ibm-plex-sans-thai-latin-400-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'IBM Plex Sans Thai';font-style:normal;font-display:swap;font-weight:500;src:url(fonts/ibm-plex-sans-thai-thai-500-normal.woff2) format('woff2');unicode-range:U+0E01-0E5B,U+200C-200D,U+25CC}
+@font-face{font-family:'IBM Plex Sans Thai';font-style:normal;font-display:swap;font-weight:500;src:url(fonts/ibm-plex-sans-thai-latin-500-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'IBM Plex Sans Thai';font-style:normal;font-display:swap;font-weight:600;src:url(fonts/ibm-plex-sans-thai-thai-600-normal.woff2) format('woff2');unicode-range:U+0E01-0E5B,U+200C-200D,U+25CC}
+@font-face{font-family:'IBM Plex Sans Thai';font-style:normal;font-display:swap;font-weight:600;src:url(fonts/ibm-plex-sans-thai-latin-600-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-display:swap;font-weight:400;src:url(fonts/ibm-plex-mono-latin-400-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-display:swap;font-weight:500;src:url(fonts/ibm-plex-mono-latin-500-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+
+/* Layout: แถบหัวสีน้ำเงินเข้ม (โลโก้ + ชื่อ) แล้วแผงอินพุตซ้าย ผลลัพธ์ขวา โทนขรึม ใช้สีสดเฉพาะสถานะและขนาดท่อที่แนะนำ */
+:root {
+  --bg: #E9EDF0;
+  --surface: #FFFFFF;
+  --soft: #E1E7EB;
+  --ink: #17232D;
+  --muted: #5A6B77;
+  --line: #D3DAE0;
+  --hero: #14293B; --hero-fg: #F2F6F8; --hero-muted: #A9BAC6;
+  --closed: #1E5E7C;
+  --open: #8A5A2B;
+  --on: #FFFFFF;
+  --ok: #1F6B45; --ok-bg: #E1EFE7;
+  --warn: #8A5B00; --warn-bg: #F6EBD2;
+  --bad: #A3322B; --bad-bg: #F6E1DE;
+  --font-ui: 'IBM Plex Sans Thai', 'Noto Sans Thai', system-ui, sans-serif;
+  --font-num: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1820; --surface: #15232D; --soft: #1C2E3A; --ink: #E3EAEE; --muted: #92A4B0; --line: #2A3E4B;
+    --hero: #0A121A; --hero-fg: #EEF3F6; --hero-muted: #8FA3B0;
+    --closed: #6FB4D3; --open: #D6A06A; --on: #0E1820;
+    --ok: #66C28E; --ok-bg: #17362A; --warn: #E0B458; --warn-bg: #372C14; --bad: #F0928A; --bad-bg: #3F2220;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1820; --surface: #15232D; --soft: #1C2E3A; --ink: #E3EAEE; --muted: #92A4B0; --line: #2A3E4B;
+  --hero: #0A121A; --hero-fg: #EEF3F6; --hero-muted: #8FA3B0;
+  --closed: #6FB4D3; --open: #D6A06A; --on: #0E1820;
+  --ok: #66C28E; --ok-bg: #17362A; --warn: #E0B458; --warn-bg: #372C14; --bad: #F0928A; --bad-bg: #3F2220;
+  color-scheme: dark;
+}
+:root { scrollbar-gutter: stable; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--font-ui); padding-block: 20px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+#root { --accent: var(--closed); max-width: 1180px; margin: 0 auto; }
+#root[data-loop="open"] { --accent: var(--open); }
+#root[data-lang="th"] .en, #root[data-lang="en"] .th { display: none; }
+#root[data-loop="closed"] .ol, #root[data-loop="open"] .cl { display: none; }
+* { box-sizing: border-box; }
+h1, h2, h3 { margin: 0; font-weight: 600; text-wrap: balance; }
+h1 { font-size: 24px; letter-spacing: -0.01em; }
+h2 { font-size: 16px; }
+h3 { font-size: 14px; margin-top: 16px; }
+a { color: var(--accent); }
+
+.hero { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; justify-content: space-between; background: var(--hero); color: var(--hero-fg); border-radius: 12px; padding: 14px 18px; }
+.brand { display: flex; align-items: center; gap: 14px; flex: 1 1 320px; min-width: 0; }
+.brand > div { min-width: 0; }
+.logo { width: 60px; height: 60px; flex: none; display: block; }
+.hero h1 { font-size: 26px; letter-spacing: -0.01em; line-height: 1.2; }
+#subtitle { margin: 2px 0 0; color: var(--hero-muted); font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 760px) { #subtitle { white-space: normal; min-height: 2.8em; } }
+.ctrl { display: flex; gap: 10px; align-items: stretch; flex: 0 0 auto; }
+.seg { display: flex; background: var(--soft); border-radius: 10px; padding: 3px; gap: 3px; }
+.seg button { font: 500 13px var(--font-num); border: 0; background: transparent; color: var(--muted); padding: 8px 12px; border-radius: 8px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 0 0 1px var(--line); }
+.hero .seg { background: rgba(255, 255, 255, .10); }
+.hero .seg button { color: var(--hero-muted); }
+.hero .seg button[aria-pressed="true"] { background: var(--hero-fg); color: var(--hero); box-shadow: none; }
+.modebar { margin: 16px 0 18px; }
+.tabs { display: inline-flex; background: var(--soft); border-radius: 10px; padding: 3px; gap: 3px; }
+.tabs button { font: 600 14px var(--font-ui); border: 0; background: transparent; color: var(--muted); padding: 9px 24px; border-radius: 8px; cursor: pointer; }
+.tabs button[aria-selected="true"] { background: var(--accent); color: var(--on); }
+button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.app { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 900px) { .app { grid-template-columns: minmax(0, 1fr); } }
+.panel, .block { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.panel { padding: 18px; display: grid; gap: 20px; }
+@media (min-width: 901px) { .panel { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow-y: auto; } }
+.results { display: grid; gap: 18px; min-width: 0; }
+.block { padding: 18px; min-width: 0; }
+.block > h2 { margin-bottom: 4px; }
+.block > .hint { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
+
+fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 10px; min-width: 0; }
+legend { font-size: 14px; color: var(--ink); font-weight: 600; padding: 0 0 8px; margin-bottom: 4px; width: 100%; border-bottom: 1px solid var(--line); }
+.row2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.f { display: grid; gap: 4px; font-size: 13px; color: var(--muted); min-width: 0; align-content: start; }
+.f > span:first-child { line-height: 1.3; }
+input, select { font: 15px var(--font-num); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px; min-height: 42px; width: 100%; min-width: 0; }
+select { font-family: var(--font-ui); }
+input[type=number] { appearance: textfield; -moz-appearance: textfield; }
+.inline { display: grid; grid-template-columns: minmax(0, 1fr) 118px; gap: 8px; }
+.ro { font: 13px var(--font-num); color: var(--muted); }
+.ro b { color: var(--ink); font-weight: 500; }
+details.crit { border-top: 1px solid var(--line); padding-top: 12px; }
+details > summary { cursor: pointer; font-size: 13px; font-weight: 500; }
+details[open] > summary { margin-bottom: 10px; }
+.tier { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.mini { font-size: 12px; color: var(--muted); margin: 8px 0 0; }
+
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.kpi { padding: 16px 18px; display: grid; gap: 3px; align-content: start; min-width: 0; }
+.kpi + .kpi { border-left: 1px solid var(--line); }
+@media (max-width: 760px) { .kpi + .kpi { border-left: 0; border-top: 1px solid var(--line); } }
+.lbl { font-size: 12px; color: var(--muted); letter-spacing: .03em; }
+.big { font: 600 30px/1.15 var(--font-ui); font-variant-numeric: tabular-nums; color: var(--ink); }
+.kpi.rec .big { color: var(--accent); }
+.big i { font-style: normal; font-size: 15px; color: var(--muted); margin-left: 4px; }
+.sm { font: 13px var(--font-num); color: var(--ink); overflow-wrap: anywhere; }
+.sm.m { color: var(--muted); }
+.alert { padding: 10px 12px; border-radius: 8px; font-size: 13px; background: var(--warn-bg); color: var(--warn); margin-top: 12px; }
+.alert.bad { background: var(--bad-bg); color: var(--bad); }
+
+.tw { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+table { border-collapse: collapse; width: 100%; font: 13px var(--font-num); font-variant-numeric: tabular-nums; }
+th, td { padding: 7px 10px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); }
+th { font: 500 12px var(--font-ui); color: var(--muted); background: var(--soft); position: sticky; top: 0; }
+th:first-child, td:first-child { text-align: left; }
+th:last-child, td:last-child { text-align: left; }
+tr:last-child td { border-bottom: 0; }
+tr.rec td, tr.cur td { background: color-mix(in srgb, var(--accent) 12%, var(--surface)); }
+tr.rec td { font-weight: 500; }
+td.bad { color: var(--bad); } td.warn { color: var(--warn); } td.dim { color: var(--muted); }
+table.guide td { white-space: normal; text-align: left; font: 13px var(--font-ui); vertical-align: top; }
+table.guide td.v { font: 13px var(--font-num); white-space: nowrap; }
+table.guide th { text-align: left; }
+.pill { display: inline-block; font: 500 12px var(--font-ui); padding: 1px 9px; border-radius: 99px; }
+.pill.ok { background: var(--ok-bg); color: var(--ok); }
+.pill.near { background: var(--warn-bg); color: var(--warn); }
+.pill.over { background: var(--bad-bg); color: var(--bad); }
+.pill.low { background: var(--soft); color: var(--muted); }
+.tools { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-top: 10px; font-size: 13px; color: var(--muted); }
+.tools label { display: flex; gap: 6px; align-items: center; cursor: pointer; }
+.tools input { width: auto; }
+.btn { font: 500 13px var(--font-ui); background: var(--accent); color: var(--on); border: 0; border-radius: 7px; padding: 8px 14px; cursor: pointer; }
+
+.chart { overflow-x: auto; margin-top: 4px; }
+.chart svg { display: block; min-width: 560px; width: 100%; height: auto; }
+.chart.big svg { min-width: 760px; }
+.g-line { stroke: var(--line); stroke-width: 1; }
+.g-minor { stroke: var(--line); stroke-width: .5; opacity: .6; }
+.g-band { fill: var(--accent); fill-opacity: .10; }
+.g-lim { stroke: var(--bad); stroke-width: 1.2; stroke-dasharray: 5 4; }
+.g-path { fill: none; stroke: var(--accent); stroke-width: 2; }
+.g-pipe { fill: none; stroke: var(--muted); stroke-width: 1.2; opacity: .75; }
+.g-pipe.sel { stroke: var(--accent); stroke-width: 2.6; opacity: 1; }
+.g-vel { fill: none; stroke: var(--open); stroke-width: 1; stroke-dasharray: 3 4; opacity: .8; }
+:root[data-theme="dark"] .g-vel { stroke: var(--open); }
+.g-cross { stroke: var(--accent); stroke-width: 1; stroke-dasharray: 2 3; }
+.g-t { fill: var(--muted); font: 11px var(--font-num); }
+.g-t.b { fill: var(--ink); font-weight: 500; }
+.g-t.bad { fill: var(--bad); }
+.g-t.vel { fill: var(--open); }
+.g-t.acc { fill: var(--accent); font-weight: 500; }
+.g-t.ttl { font: 500 12px var(--font-ui); fill: var(--ink); }
+.s-ok { fill: var(--ok); } .s-near { fill: var(--warn); } .s-over { fill: var(--bad); } .s-low { fill: var(--muted); }
+.g-ring { fill: none; stroke: var(--accent); stroke-width: 2; }
+.g-dot { fill: var(--accent); }
+
+.fits { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
+.stack { display: flex; height: 14px; border-radius: 7px; overflow: hidden; background: var(--soft); margin: 12px 0 8px; }
+.stack span { display: block; height: 100%; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.c1 { background: var(--accent); } .c2 { background: color-mix(in srgb, var(--accent) 60%, var(--surface)); }
+.c3 { background: color-mix(in srgb, var(--accent) 35%, var(--surface)); } .c4 { background: var(--muted); } .c5 { background: var(--line); }
+.phead { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px 20px; margin: 14px 0 4px; }
+.phead > div { display: grid; gap: 2px; }
+.phead .big { font-size: 24px; }
+.notes { font-size: 13px; color: var(--muted); }
+.notes ul, .refs ol { margin: 8px 0 0; padding-left: 20px; display: grid; gap: 5px; }
+.notes b { color: var(--ink); font-weight: 500; }
+.refs { font-size: 13px; color: var(--muted); }
+.refs li b { color: var(--ink); font-weight: 500; }
+.empty { padding: 28px 16px; text-align: center; color: var(--muted); }
+
+.seg button.flag { padding: 5px 7px; line-height: 0; }
+.seg button.flag svg { width: 28px; height: 18px; border-radius: 2px; display: block; box-shadow: 0 0 0 1px var(--line); }
+.seg button.flag[aria-pressed="false"] { opacity: .5; }
+.seg.pick { display: flex; flex-wrap: wrap; }
+.seg.pick button { flex: 1 1 auto; text-align: center; line-height: 1.25; padding: 10px 10px; font-size: 14px; }
+.seg.pick#known button { font-family: var(--font-ui); }
+.seg.pick button[aria-pressed="true"] { background: var(--accent); color: var(--on); box-shadow: none; }
+.zoomwrap { position: relative; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); touch-action: pan-y; }
+.zoomwrap.zoomed { touch-action: none; cursor: grab; }
+.zoomwrap.zoomed:active { cursor: grabbing; }
+.zoomwrap svg { display: block; width: 100%; height: auto; user-select: none; -webkit-user-select: none; }
+.zoomctl { position: absolute; top: 8px; right: 8px; display: flex; gap: 4px; }
+.zoomctl button { width: 34px; height: 34px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 7px; font: 500 17px var(--font-num); cursor: pointer; padding: 0; }
+.zoomctl button:hover { border-color: var(--accent); color: var(--accent); }
+.zoomlvl { position: absolute; left: 10px; bottom: 8px; font: 12px var(--font-num); color: var(--muted); pointer-events: none; }
+
+.dock { display: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.dock .go { text-align: right; }
+.dock:focus-visible { outline: 2px solid var(--hero-fg); outline-offset: -4px; }
+.dock div { display: grid; gap: 1px; }
+.dock b { font: 600 20px var(--font-ui); font-variant-numeric: tabular-nums; }
+.dock span { font-size: 12px; color: var(--hero-muted); }
+@media (max-width: 900px) {
+  .dock:not(:empty) { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; gap: 18px; justify-content: space-between; align-items: flex-end; background: var(--hero); color: var(--hero-fg);
+    padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); box-shadow: 0 -6px 16px rgba(0, 0, 0, .2); }
+  body { padding-bottom: 90px; }
+}
+
+</style>
+</head>
+<body>
+<div id="root" data-loop="closed" data-lang="th">
+  <header class="hero">
+    <div class="brand">
+      <img class="logo" src="data:image/png;base64,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" alt="Witmongkol Co.,Ltd. Pipe Calculator" width="60" height="60">
+      <div>
+        <h1>Pipe Calculator</h1>
+        <p id="subtitle"></p>
+      </div>
+    </div>
+    <div class="ctrl">
+      <div class="seg" id="sysSeg" role="group" aria-label="Unit system">
+        <button type="button" data-sys="si" aria-pressed="true">SI</button>
+        <button type="button" data-sys="ip" aria-pressed="false">IP</button>
+      </div>
+      <div class="seg" id="langSeg" role="group" aria-label="Language">
+        <button type="button" class="flag" data-lang="th" aria-pressed="true" aria-label="ไทย" title="ไทย"><svg viewBox="0 0 9 6" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="9" height="6" fill="#A51931"/><rect y="1" width="9" height="4" fill="#F4F5F8"/><rect y="2" width="9" height="2" fill="#2D2A4A"/></svg></button>
+        <button type="button" class="flag" data-lang="en" aria-pressed="false" aria-label="English" title="English"><svg viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><clipPath id="ujs"><path d="M0,0 v30 h60 v-30 z"/></clipPath><clipPath id="ujt"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath><g clip-path="url(#ujs)"><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#ujt)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></g></svg></button>
+      </div>
+    </div>
+  </header>
+  <div class="modebar"><div class="tabs" role="tablist" aria-label="Loop type" id="loopTabs"></div></div>
+  <main class="app">
+    <section class="panel" id="inputs" aria-label="Inputs"></section>
+    <div class="results" id="results"></div>
+  </main>
+  <div class="dock" id="dock" role="button" tabindex="0" aria-label="Go to pipe size table"></div>
+</div>
+
+<script>
+const Core = (() => {
+  const G = 9.80665;
+  const GPM_M3S = 6.30902e-5;
+  const BTUH_KW = 0.29307107e-3; // 1 BTU/h = 0.000293071 kW
+  const TR_KW = 12000 * BTUH_KW; // 1 TR = 12,000 BTU/h = 3.51685 kW
+
+  // คุณสมบัติน้ำ ที่อุณหภูมิ T (°C)
+  function waterProps(T) {
+    const rho = (999.83952 + 16.945176 * T - 7.9870401e-3 * T ** 2 - 46.170461e-6 * T ** 3 +
+      105.56302e-9 * T ** 4 - 280.54253e-12 * T ** 5) / (1 + 16.87985e-3 * T);
+    const mu = 2.414e-5 * Math.pow(10, 247.8 / (T + 273.15 - 140)); // Pa·s
+    const cp = 4.2174 - 3.720283e-3 * T + 1.412855e-4 * T ** 2 - 2.654387e-6 * T ** 3 + 2.093236e-8 * T ** 4; // kJ/kg·K
+    return { rho, mu, cp };
+  }
+
+  // ฐานข้อมูลท่อ (ID คำนวณจาก OD และความหนาผนัง)
+  const DN = [15, 20, 25, 32, 40, 50, 65, 80, 100, 125, 150, 200, 250, 300, 350, 400, 450, 500, 600];
+  const INCH = ['½"', '¾"', '1"', '1¼"', '1½"', '2"', '2½"', '3"', '4"', '5"', '6"', '8"', '10"', '12"', '14"', '16"', '18"', '20"', '24"'];
+  const OD = [21.34, 26.67, 33.40, 42.16, 48.26, 60.33, 73.03, 88.90, 114.30, 141.30, 168.28, 219.08, 273.05, 323.85, 355.60, 406.40, 457.20, 508.00, 609.60];
+  const W40 = [2.77, 2.87, 3.38, 3.56, 3.68, 3.91, 5.16, 5.49, 6.02, 6.55, 7.11, 8.18, 9.27, 10.31, 11.13, 12.70, 14.27, 15.09, 17.48];
+  const W80 = [3.73, 3.91, 4.55, 4.85, 5.08, 5.54, 7.01, 7.62, 8.56, 9.53, 10.97, 12.70, 15.09, 17.48, 19.05, 21.44, 23.83, 26.19, 30.96];
+
+  const steelRows = (W) => DN.map((dn, i) => ({
+    dn, tier: dn, label: 'DN' + dn, alt: INCH[i], od: OD[i], id: +(OD[i] - 2 * W[i]).toFixed(2)
+  }));
+
+  const CU_DN = [15, 20, 25, 32, 40, 50, 65, 80, 100, 125, 150];
+  const CU_OD = [15.875, 22.225, 28.575, 34.925, 41.275, 53.975, 66.675, 79.375, 104.775, 130.175, 155.575];
+  const CU_W = [1.016, 1.143, 1.270, 1.397, 1.524, 1.753, 1.981, 2.108, 2.769, 3.175, 3.581];
+  const copperRows = CU_DN.map((dn, i) => ({
+    dn, tier: dn, label: 'DN' + dn, alt: INCH[i], od: CU_OD[i], id: +(CU_OD[i] - 2 * CU_W[i]).toFixed(2)
+  }));
+
+  // HDPE PE100 PN10 (SDR17) ผนัง = OD/17 ปัดตามตาราง ISO 4427 (ขั้นต่ำ 2.0 มม.)
+  const HD_OD = [32, 40, 50, 63, 75, 90, 110, 125, 140, 160, 180, 200, 225, 250, 280, 315, 355, 400, 450, 500, 560, 630];
+  const HD_W = [2.0, 2.4, 3.0, 3.8, 4.5, 5.4, 6.6, 7.4, 8.3, 9.5, 10.7, 11.9, 13.4, 14.8, 16.6, 18.7, 21.1, 23.7, 26.7, 29.7, 33.2, 37.4];
+  // ท่อพลาสติกขายตาม OD: map เป็น DN ประมาณเพื่อใช้เทียบเกณฑ์ความเร็วตามขนาด
+  const tierOfOD = (od) => (od <= 63 ? 50 : od <= 110 ? 100 : od <= 225 ? 200 : 250);
+  const hdpeRows = HD_OD.map((od, i) => ({
+    dn: od, tier: tierOfOD(od), label: 'OD' + od, alt: 'SDR17', od, id: +(od - 2 * HD_W[i]).toFixed(1)
+  }));
+
+  // PPR (ISO 15874 / DIN 8077): PN10 = SDR11, PN20 = SDR6 ความหนาผนังตามตารางผู้ผลิตทั่วไป
+  const PPR_OD = [20, 25, 32, 40, 50, 63, 75, 90, 110, 125, 160];
+  const PPR_DN = [15, 20, 25, 32, 40, 50, 65, 80, 100, 125, 150];
+  const PPR_W10 = [1.9, 2.3, 2.9, 3.7, 4.6, 5.8, 6.8, 8.2, 10.0, 11.4, 14.6];
+  const PPR_W20 = [3.4, 4.2, 5.4, 6.7, 8.3, 10.5, 12.5, 15.0, 18.3, 20.8, 26.6];
+  const pprRows = (W) => PPR_OD.map((od, i) => ({
+    dn: PPR_DN[i], tier: PPR_DN[i], label: 'OD' + od, alt: 'DN' + PPR_DN[i], od, id: +(od - 2 * W[i]).toFixed(1)
+  }));
+
+  // เรียงตามความนิยมใช้: main = ชนิดท่อที่ใช้หลัก
+  const PIPES = {
+    steel40: { main: true, name: { th: 'เหล็กดำ/ชุบสังกะสี Sch 40', en: 'Steel Sch 40 (ASTM A53)' }, short: { th: 'เหล็ก Sch 40', en: 'Steel Sch 40' }, eps: { closed: 0.045, open: 0.15 }, rows: steelRows(W40) },
+    steel80: { main: true, name: { th: 'เหล็ก Sch 80', en: 'Steel Sch 80' }, short: { th: 'เหล็ก Sch 80', en: 'Steel Sch 80' }, eps: { closed: 0.045, open: 0.15 }, rows: steelRows(W80) },
+    ppr20: { main: true, name: { th: 'PPR PN20 (SDR6)', en: 'PPR PN20 (SDR6)' }, short: { th: 'PPR PN20', en: 'PPR PN20' }, eps: { closed: 0.007, open: 0.007 }, rows: pprRows(PPR_W20) },
+    ppr10: { main: true, name: { th: 'PPR PN10 (SDR11)', en: 'PPR PN10 (SDR11)' }, short: { th: 'PPR PN10', en: 'PPR PN10' }, eps: { closed: 0.007, open: 0.007 }, rows: pprRows(PPR_W10) },
+    copperL: { main: false, name: { th: 'ทองแดง Type L', en: 'Copper Type L (ASTM B88)' }, short: { th: 'ทองแดง L', en: 'Copper L' }, eps: { closed: 0.0015, open: 0.0015 }, rows: copperRows },
+    hdpe: { main: false, name: { th: 'HDPE PE100 PN10 (SDR17)', en: 'HDPE PE100 PN10 (SDR17)' }, short: { th: 'HDPE PN10', en: 'HDPE PN10' }, eps: { closed: 0.007, open: 0.007 }, rows: hdpeRows }
+  };
+
+  // ตัวประกอบสูญเสียของข้อต่อ/วาล์ว (K-method)
+  const FITTINGS = [
+    { key: 'elbow90', name: { th: 'ข้องอ 90°', en: 'Elbow 90°' }, K: 0.75 },
+    { key: 'elbow45', name: { th: 'ข้องอ 45°', en: 'Elbow 45°' }, K: 0.35 },
+    { key: 'teeRun', name: { th: 'ทีไหลตรง', en: 'Tee, through run' }, K: 0.4 },
+    { key: 'teeBranch', name: { th: 'ทีแยกสาขา', en: 'Tee, branch' }, K: 1.0 },
+    { key: 'gate', name: { th: 'Gate valve', en: 'Gate valve' }, K: 0.17 },
+    { key: 'butterfly', name: { th: 'Butterfly valve', en: 'Butterfly valve' }, K: 0.6 },
+    { key: 'check', name: { th: 'Check valve', en: 'Check valve' }, K: 2.0 },
+    { key: 'strainer', name: { th: 'Y-strainer', en: 'Y-strainer' }, K: 3.0 }
+  ];
+
+  // Darcy friction factor (Colebrook-White)
+  function fDarcy(Re, rel) {
+    if (Re < 2300) return 64 / Re;
+    let f = 0.25 / Math.pow(Math.log10(rel / 3.7 + 5.74 / Math.pow(Re, 0.9)), 2);
+    for (let i = 0; i < 50; i++) {
+      const x = -2 * Math.log10(rel / 3.7 + 2.51 / (Re * Math.sqrt(f)));
+      const fn = 1 / (x * x);
+      if (Math.abs(fn - f) < 1e-12) { f = fn; break; }
+      f = fn;
+    }
+    return f;
+  }
+
+  function flowFromLoad({ mode, value, loop, dT, Tsup, heatFactor }) {
+    const Tm = Tsup + dT / 2;
+    const p = waterProps(Tm);
+    let Q, kW;
+    if (mode === 'TR' || mode === 'kW' || mode === 'BTUh') {
+      const kWc = mode === 'TR' ? value * TR_KW : mode === 'BTUh' ? value * BTUH_KW : value;
+      kW = loop === 'open' ? kWc * heatFactor : kWc;
+      Q = kW / (p.cp * dT) / p.rho;
+    } else {
+      Q = mode === 'Ls' ? value / 1000 : mode === 'Lmin' ? value / 60000 : mode === 'm3h' ? value / 3600 : value * GPM_M3S;
+      kW = Q * p.rho * p.cp * dT;
+    }
+    return { Q, kW, props: p, Tm };
+  }
+
+  function vmaxFor(dn, tiers) {
+    for (const t of tiers) if (dn <= t.maxDN) return t.v;
+    return tiers[tiers.length - 1].v;
+  }
+
+  function evaluateSizes(rows, Q, p, eps, crit) {
+    return rows.map((row) => {
+      const D = row.id / 1000;
+      const A = Math.PI * D * D / 4;
+      const v = Q / A;
+      const Re = p.rho * v * D / p.mu;
+      const f = fDarcy(Re, eps / row.id);
+      const dp = f / D * p.rho * v * v / 2; // Pa/m
+      const vmax = vmaxFor(row.tier ?? row.dn, crit.tiers);
+      let status;
+      if (v > vmax || dp > crit.fmax) status = 'over';
+      else if (v < crit.vmin) status = 'low';
+      else if (v > 0.9 * vmax || dp > 0.9 * crit.fmax) status = 'near';
+      else status = 'ok';
+      return { row, v, Re, f, dp, vmax, status };
+    });
+  }
+
+  // เลือกขนาดที่เล็กที่สุดที่ผ่านเกณฑ์
+  function recommend(res) {
+    const hit = res.find((r) => r.status === 'ok' || r.status === 'near');
+    if (hit) return { sel: hit, note: null };
+    const low = res.find((r) => r.status === 'low');
+    if (low) return { sel: low, note: 'lowflow' };
+    return { sel: res[res.length - 1], note: 'toolarge' };
+  }
+
+  function pumpHead({ dpdl, L, sumK, v, rho, equipKPa, staticM, safety, eff, Q }) {
+    const pipe = dpdl * L / 1000;
+    const fit = sumK * rho * v * v / 2 / 1000;
+    const stat = staticM * rho * G / 1000;
+    const sub = pipe + fit + equipKPa + stat;
+    const total = sub * (1 + safety / 100);
+    return {
+      pipe, fit, equip: equipKPa, stat, sub, total,
+      head: total * 1000 / (rho * G),
+      shaftKW: Q * total / eff
+    };
+  }
+
+  return { waterProps, PIPES, FITTINGS, fDarcy, flowFromLoad, evaluateSizes, recommend, pumpHead, vmaxFor, TR_KW, BTUH_KW, GPM_M3S, G };
+})();
+if (typeof module !== 'undefined') module.exports = Core;
+
+</script>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const state = { loop: 'closed', lang: 'th', sys: 'si', known: 'cap', unit: 'TR', showAll: false, last: null };
+  try { const l = localStorage.getItem('cps.lang'), s = localStorage.getItem('cps.sys'); if (l === 'en' || l === 'th') state.lang = l; if (s === 'ip' || s === 'si') state.sys = s; } catch (e) {}
+  const L = (th, en) => (state.lang === 'th' ? th : en);
+  const B = (th, en) => `<span class="th">${th}</span><span class="en">${en}</span>`;
+  const dg = (x) => (x >= 100 ? 0 : x >= 10 ? 1 : x >= 1 ? 2 : 3);
+  const dk = (x) => (x >= 100 ? 0 : x >= 10 ? 1 : 2);
+const fmt = (x, d = 2) => isFinite(x) ? x.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }) : '–';
+  const ip = () => state.sys === 'ip';
+
+  // ---------- หน่วย ----------
+  // k = ค่า SI ต่อ 1 หน่วย IP, pairs = [SI, IP] ค่ากลมที่นิยมใช้ เพื่อให้สลับหน่วยแล้วค่าเป็นตัวเลขสวย
+  const KIND = {
+    temp: { si: '°C', ip: '°F', dec: { si: 1, ip: 1 }, pairs: [[6.7, 44], [12.2, 54], [29.4, 85], [35, 95]] },
+    eps: { si: 'mm', ip: 'in', k: 25.4, dec: { si: 4, ip: 6 }, pairs: [] },
+    vel: { si: 'm/s', ip: 'ft/s', k: 0.3048, dec: { si: 2, ip: 2 }, pairs: [[0.3, 1], [0.6, 2], [0.9, 3], [1.2, 4], [1.8, 6], [2.4, 8], [3, 10]] },
+    fric: { si: 'Pa/m', ip: 'ft/100ft', k: 98.06, dec: { si: 0, ip: 2 }, pairs: [[400, 4], [100, 1], [250, 2.5], [200, 2], [300, 3], [1000, 10]] },
+    len: { si: 'm', ip: 'ft', k: 0.3048, dec: { si: 1, ip: 0 }, pairs: [[300, 1000], [150, 500], [6, 20], [100, 300]] },
+    press: { si: 'kPa', ip: 'ft wg', k: 2.98898, dec: { si: 1, ip: 1 }, pairs: [[60, 20], [90, 30], [30, 10]] }
+  };
+  const FIELDS = { tin: 'temp', tout: 'temp', eps: 'eps', vmin: 'vel', v1: 'vel', v2: 'vel', v3: 'vel', v4: 'vel', fmax: 'fric', fmin: 'fric', L: 'len', stat: 'len', eq1: 'press', eq2: 'press', eq3: 'press' };
+  const toSI = (kind, x, sys) => sys === 'si' ? x : kind === 'temp' ? (x - 32) / 1.8 : x * KIND[kind].k;
+  const fromSI = (kind, x, sys) => sys === 'si' ? x : kind === 'temp' ? x * 1.8 + 32 : x / KIND[kind].k;
+  function convertDisplay(kind, old, from, to) {
+    if (from === to) return old;
+    const K = KIND[kind];
+    const hit = K.pairs.find((p) => Math.abs(p[from === 'si' ? 0 : 1] - old) < 1e-6);
+    if (hit) return hit[to === 'si' ? 0 : 1];
+    return +fromSI(kind, toSI(kind, old, from), to).toFixed(K.dec[to]);
+  }
+  const getSI = (id) => { const v = parseFloat($(id).value); return isFinite(v) ? toSI(FIELDS[id], v, state.sys) : NaN; };
+  const setSI = (id, si) => { $(id).value = String(convertDisplay(FIELDS[id], si, 'si', state.sys)); };
+  const num = (id) => { const v = parseFloat($(id).value); return isFinite(v) ? v : NaN; };
+
+  const dVel = (v) => ip() ? v / 0.3048 : v;
+  const dFric = (dp) => ip() ? dp / 98.06 : dp;
+  const fFric = (dp) => ip() ? fmt(dp / 98.06, 2) : fmt(dp, 0);
+  const fFricAlt = (dp) => ip() ? fmt(dp, 0) : fmt(dp / 98.06, 2);
+  const uVel = () => (ip() ? 'ft/s' : 'm/s');
+  const uFric = () => (ip() ? 'ft/100ft' : 'Pa/m');
+  const uFricAlt = () => (ip() ? 'Pa/m' : 'ft/100ft');
+
+  const CAPBASE = { TR: Core.TR_KW, kW: 1, BTUh: Core.BTUH_KW };
+  const FLOWBASE = { Ls: 1e-3, Lmin: 1 / 60000, m3h: 1 / 3600, gpm: Core.GPM_M3S };
+  const UNITLBL = { TR: 'TR', kW: 'kW', BTUh: 'BTU/h', Ls: 'L/s', Lmin: 'L/min', m3h: 'm³/h', gpm: 'US gpm' };
+
+  const DEF = {
+    closed: { tin: 6.7, tout: 12.2, hf: 1, vmin: 0.6, L: 300, stat: 0, eq: [60, 90, 0],
+      counts: { elbow90: 14, elbow45: 0, teeRun: 4, teeBranch: 2, gate: 0, butterfly: 8, check: 1, strainer: 1 } },
+    open: { tin: 32, tout: 37.5, hf: 1.25, vmin: 0.9, L: 150, stat: 6, eq: [60, 30, 0],
+      counts: { elbow90: 8, elbow45: 0, teeRun: 2, teeBranch: 2, gate: 0, butterfly: 6, check: 1, strainer: 1 } }
+  };
+
+  // ---------- โครงหน้า (สร้างครั้งเดียว ภาษาสลับด้วย CSS) ----------
+  const U = (kind) => `<span data-u="${kind}"></span>`;
+  $('loopTabs').innerHTML =
+    '<button role="tab" data-loop="closed" aria-selected="true" title="น้ำเย็น CHW / Chilled water"><b>Closed loop</b></button>' +
+    '<button role="tab" data-loop="open" aria-selected="false" title="น้ำหล่อเย็น CW / Condenser water, cooling tower"><b>Open loop</b></button>';
+
+  $('inputs').innerHTML = `
+    <fieldset>
+      <legend>${B('1 · โหลดและอัตราไหล', '1 · Load & flow')}</legend>
+      <div class="f"><span>${B('ข้อมูลที่ทราบ', 'Known input')}</span>
+        <div class="seg pick" id="known" role="group">
+          <button type="button" data-v="cap" aria-pressed="true">${B('ขนาดทำความเย็น', 'Cooling capacity')}</button>
+          <button type="button" data-v="flow" aria-pressed="false">${B('ปริมาณน้ำ', 'Water flow')}</button>
+        </div></div>
+      <label class="f"><span id="valLbl"></span><input id="val" type="number" step="any" min="0" value="500"></label>
+      <div class="f"><span>${B('หน่วย', 'Unit')}</span><div class="seg pick" id="unit" role="group"></div></div>
+      <label class="f" id="hfWrap" hidden><span>${B('ตัวคูณความร้อนที่ระบายที่หอผึ่งเย็น (≈ 1 + 1/COP)', 'Heat rejection factor at the cooling tower (≈ 1 + 1/COP)')}</span><input id="hf" type="number" step="0.01" min="1" value="1.25"></label>
+    </fieldset>
+    <fieldset>
+      <legend>${B('2 · อุณหภูมิน้ำ', '2 · Water temperature')}</legend>
+      <div class="row2">
+        <label class="f"><span><span class="cl">${B('น้ำเข้า (จ่ายจากชิลเลอร์)', 'Entering (supply from chiller)')}</span><span class="ol">${B('น้ำเข้าคอนเดนเซอร์', 'Entering condenser')}</span> (${U('temp')})</span><input id="tin" type="number" step="0.1"></label>
+        <label class="f"><span><span class="cl">${B('น้ำออก (กลับเข้าชิลเลอร์)', 'Leaving (return to chiller)')}</span><span class="ol">${B('น้ำออกคอนเดนเซอร์', 'Leaving condenser')}</span> (${U('temp')})</span><input id="tout" type="number" step="0.1"></label>
+      </div>
+      <div class="ro" id="dtro"></div>
+    </fieldset>
+    <fieldset>
+      <legend>${B('3 · ท่อที่ติดตั้ง', '3 · Installed pipe')}</legend>
+      <label class="f"><span>${B('ชนิดท่อ', 'Pipe type')}</span><select id="mat"></select></label>
+      <label class="f"><span>${B('ความหยาบผิวท่อ ε', 'Pipe roughness ε')} (${U('eps')})</span><input id="eps" type="number" step="any" min="0"></label>
+      <div class="mini" id="epsNote"></div>
+    </fieldset>
+    <details class="crit">
+      <summary>${B('เกณฑ์เลือกขนาดท่อ (ปรับได้)', 'Sizing criteria (editable)')}</summary>
+      <div class="tier">
+        <label class="f"><span>${B('v ต่ำสุด', 'Min velocity')} (${U('vel')})</span><input id="vmin" type="number" step="any" min="0"></label>
+        <label class="f"><span>${B('ΔP สูงสุด', 'Max friction')} (${U('fric')})</span><input id="fmax" type="number" step="any" min="0"></label>
+        <label class="f"><span>${B('v สูงสุด ≤ DN50 (2")', 'Max v, ≤ DN50 (2")')} (${U('vel')})</span><input id="v1" type="number" step="any"></label>
+        <label class="f"><span>${B('v สูงสุด DN65–100', 'Max v, DN65–100')} (${U('vel')})</span><input id="v2" type="number" step="any"></label>
+        <label class="f"><span>${B('v สูงสุด DN125–200', 'Max v, DN125–200')} (${U('vel')})</span><input id="v3" type="number" step="any"></label>
+        <label class="f"><span>${B('v สูงสุด ≥ DN250', 'Max v, ≥ DN250')} (${U('vel')})</span><input id="v4" type="number" step="any"></label>
+        <label class="f"><span>${B('ช่วงแนะนำ ΔP ต่ำสุด', 'Recommended band, low')} (${U('fric')})</span><input id="fmin" type="number" step="any" min="0"></label>
+      </div>
+      <p class="mini">${B('400 Pa/m ≈ 4 ft/100 ft และ 100 Pa/m ≈ 1 ft/100 ft เกณฑ์ตั้งต้นเป็นแนวปฏิบัติที่นิยมในงานออกแบบ ไม่ได้อ้างข้อความจากมาตรฐานฉบับใดโดยตรง ดูตารางความเร็วที่เหมาะสมด้านล่าง และตรวจกับ spec โครงการ',
+                  '400 Pa/m ≈ 4 ft/100 ft and 100 Pa/m ≈ 1 ft/100 ft. Defaults follow common design practice and are not quoted from a specific standard. See the velocity guide below and check the project spec.')}</p>
+    </details>`;
+
+  const fitInputs = Core.FITTINGS.map((f) =>
+    `<label class="f"><span>${B(f.name.th, f.name.en)} <span style="font-family:var(--font-num)">K=${f.K}</span></span><input id="k_${f.key}" type="number" step="1" min="0" value="0"></label>`).join('');
+  const eqLabel = (n, cTh, cEn, oTh, oEn) => `<label class="f"><span><span class="cl">${B(cTh, cEn)}</span><span class="ol">${B(oTh, oEn)}</span> (${U('press')})</span><input id="eq${n}" type="number" step="any" min="0"></label>`;
+
+  const guideRows = [
+    ['≤ DN50 (2")', '≤ 1.2 m/s', '≤ 4 ft/s', B('กฎทั่วไปของ ASHRAE สำหรับท่อเล็ก', 'ASHRAE rule of thumb for small pipes'), '[1][12]'],
+    ['> DN50 (2")', '≤ 400 Pa/m', '≤ 4 ft/100 ft', B('ท่อใหญ่ควบคุมด้วย friction แทนความเร็ว', 'Larger pipes governed by friction rate rather than velocity'), '[1][12]'],
+    [B('ค่าต่ำสุดทุกขนาด', 'Minimum, all sizes'), '≥ 0.6 m/s', '≥ 2 ft/s', B('พาอากาศและกันตะกอนค้าง Open loop แนะนำ ≥ 0.9 m/s (3 ft/s) กันตะกอนและตะกรัน', 'Carries air and avoids settling. For open loop ≥ 0.9 m/s (3 ft/s) is suggested to limit sediment and scale'), '[1][12]'],
+    [B('ท่อดูดปั๊ม (suction)', 'Pump suction'), '1.2–2.1 m/s', '4–7 ft/s', B('กัน cavitation และให้ NPSH พอ', 'Protects against cavitation and keeps NPSH available'), '[3][12]'],
+    [B('ท่อส่งปั๊ม (discharge)', 'Pump discharge'), '2.4–3.7 m/s', '8–12 ft/s', B('ช่วงที่ Carrier แนะนำ', 'Range given in Carrier guidance'), '[3][12]'],
+    [B('ท่อ Header', 'Header'), '1.2–4.6 m/s', '4–15 ft/s', B('ท่อ main ที่ชั่วโมงใช้งานน้อยจึงใช้ค่าบนได้', 'Upper end only for low operating hours'), '[3][12]'],
+    [B('ท่อ Riser', 'Riser'), '0.9–3.0 m/s', '3–10 ft/s', '', '[3][12]'],
+    [B('พื้นที่ที่คนอยู่ (เสียง)', 'Occupied areas (noise)'), '≤ 1.8 m/s', '≤ 6 ft/s', B('ลดเสียงน้ำไหลและเสียงจากวาล์ว', 'Limits flow and valve noise'), '[13]'],
+    [B('ขีดสูงสุดตามชั่วโมงใช้งาน', 'Upper limit vs operating hours'), '4.6 → 2.4 m/s', '15 → 8 ft/s', B('จาก 1,500 ชม./ปี ลดลงถึง 8,000 ชม./ปี (ป้องกัน erosion) ค่าตั้งต้นของแอปจึงเลือกฝั่งปลอดภัยที่ 1.2–3.0 m/s', 'From 1,500 h/yr down to 8,000 h/yr (erosion). The app defaults therefore sit on the cautious side at 1.2–3.0 m/s'), '[3][12]'],
+    [B('ขีดสูงสุดสำหรับทุกกรณี', 'Absolute upper bound'), '4.6 m/s', '15 ft/s', B('ไม่ควรเกิน', 'Should not be exceeded'), '[12]'],
+    [B('น้ำหล่อเย็นต่อชิลเลอร์', 'Condenser water at chiller'), '1.8–3.7 m/s', '6–12 ft/s', B('ไม่เกิน 12 ft/s กัน erosion ที่ท่อคอนเดนเซอร์ ความเร็วสูงขึ้นเล็กน้อยช่วยลดตะกรัน', 'Not above 12 ft/s because of tube erosion. Slightly higher velocity reduces fouling'), '[3][12]'],
+    [B('อัตราไหลต่อ TR: น้ำเย็น', 'Flow per TR: chilled water'), '0.151 L/s·TR', '2.4 gpm/TR', B('ΔT 5.56 K (10 °F) เงื่อนไขทดสอบมาตรฐาน', 'ΔT 5.56 K (10 °F), standard rating condition'), '[11]'],
+    [B('อัตราไหลต่อ TR: น้ำหล่อเย็น', 'Flow per TR: condenser water'), '0.189 L/s·TR', '3.0 gpm/TR', B('ความร้อนที่ระบาย ≈ 15,000 BTU/h ต่อ TR', 'Heat rejection ≈ 15,000 BTU/h per TR'), '[11][12]']
+  ].map((r) => `<tr><td>${r[0]}</td><td class="v">${r[1]}</td><td class="v">${r[2]}</td><td>${r[3]}</td><td class="v">${r[4]}</td></tr>`).join('');
+
+  const refItems = [
+    ['ASHRAE Handbook—Fundamentals, "Pipe Design"', B('สมการ Darcy–Weisbach และ Colebrook ค่าความหยาบท่อ ตัวประกอบสูญเสียข้อต่อ แนวทางความเร็วและ friction', 'Darcy–Weisbach and Colebrook equations, pipe roughness, fitting loss coefficients, velocity and friction guidance')],
+    ['ASHRAE Handbook—HVAC Systems and Equipment, "Hydronic Heating and Cooling System Design"', B('การออกแบบระบบท่อน้ำและปั๊ม', 'Hydronic piping and pump system design')],
+    ['Carrier, System Design Manual Part 3: Piping Design', B('ความเร็วตามหน้าที่ของท่อ และขีดจำกัด erosion ตามชั่วโมงใช้งาน', 'Velocity by service and erosion limits against operating hours')],
+    ['Crane Co., Technical Paper No. 410, "Flow of Fluids Through Valves, Fittings, and Pipe"', B('ที่มาของวิธี K-method และค่า K ของข้อต่อ (ค่าในแอปปัดเป็นค่าทั่วไป)', 'Basis of the K-method and fitting K values (app values are rounded typical figures)')],
+    ['Colebrook, C.F. (1939), J. Inst. Civil Engineers 11(4), 133–156', B('สมการหา friction factor ของการไหลปั่นป่วน', 'Friction factor equation for turbulent flow')],
+    ['ASME B36.10M; ASTM A53/A53M', B('ขนาดท่อเหล็กและความหนา Sch 40/80', 'Steel pipe dimensions and Sch 40/80 wall thickness')],
+    ['ASTM B88, Seamless Copper Water Tube', B('ขนาดท่อทองแดง Type L', 'Copper Type L tube dimensions')],
+    ['ISO 15874 / DIN 8077, Polypropylene (PP-R) piping', B('ท่อ PPR PN10 (SDR11) และ PN20 (SDR6) ความหนาผนังต่างกันเล็กน้อยตามผู้ผลิต ควรตรวจ datasheet', 'PP-R PN10 (SDR11) and PN20 (SDR6). Wall thickness varies slightly by manufacturer, check the datasheet')],
+    ['ISO 4427, Polyethylene (PE) piping for water supply', B('ท่อ HDPE PE100 SDR17', 'HDPE PE100 SDR17 pipe')],
+    ['Kell, G.S. (1975), J. Chem. Eng. Data 20(1), 97–105', B('ความหนาแน่นของน้ำตามอุณหภูมิ ส่วนความหนืดและ cp ใช้สมการประมาณเชิงประจักษ์', 'Water density against temperature. Viscosity and cp use empirical fits')],
+    ['AHRI Standard 550/590, Water-Chilled Packaged Chillers', B('เงื่อนไขมาตรฐาน 2.4 gpm/TR ฝั่งน้ำเย็น และ 3.0 gpm/TR ฝั่งน้ำหล่อเย็น', 'Rating conditions of 2.4 gpm/TR evaporator and 3.0 gpm/TR condenser')],
+    [`<a href="https://aircondlounge.com/chilled-water-pipe-sizing-guide-chart-standard-calculator/" target="_blank" rel="noopener">Chilled Water Pipe Sizing Guide</a> · <a href="https://aircondlounge.com/condenser-water-pipe-sizing/" target="_blank" rel="noopener">Condenser Water Pipe Sizing</a> (aircondlounge.com)`, B('บทความรวบรวมค่าจาก ASHRAE และ Carrier ที่ใช้ตรวจเทียบตัวเลขในตารางความเร็ว ไม่ใช่เอกสารต้นฉบับ', 'Secondary summaries of ASHRAE and Carrier figures used to cross-check the velocity table. Not primary documents')],
+    [`<a href="https://industrialmonitordirect.com/blogs/knowledgebase/chilled-water-piping-design-sizing-pressure-drop-velocity-limits" target="_blank" rel="noopener">Chilled Water Piping Design</a> (industrialmonitordirect.com)`, B('ใช้อ้างค่าเสียงสำหรับพื้นที่ที่คนอยู่ (6 ft/s) เท่านั้น บทความนี้มีตัวเลขบางจุดคลาดเคลื่อน จึงไม่ใช้ส่วนอื่น', 'Used only for the 6 ft/s occupied-area noise figure. Some numbers in that article are inconsistent, so nothing else was taken from it')]
+  ].map((r) => `<li><b>${r[0]}</b><br>${r[1]}</li>`).join('');
+
+  $('results').innerHTML = `
+    <div id="summary"></div>
+    <section class="block" id="sizeBlock" style="scroll-margin-top:12px">
+      <h2>${B('เทียบขนาดท่อ', 'Pipe size comparison')}</h2>
+      <p class="hint" id="tblHint"></p>
+      <div class="tw"><table id="tbl"></table></div>
+      <div class="tools">
+        <label><input type="checkbox" id="showAll"> ${B('แสดงทุกขนาดในตาราง', 'Show all sizes')}</label>
+        <button class="btn" id="copyBtn" type="button"></button>
+      </div>
+    </section>
+    <section class="block">
+      <h2>${B('Friction loss ตามขนาดท่อ', 'Friction loss by pipe size')}</h2>
+      <p class="hint">${B('แกนตั้งเป็นสเกลลอการิทึม แถบสีคือช่วงแนะนำ เส้นประแดงคือขีดจำกัดสูงสุด ตัวเลขใต้ชื่อท่อคือความเร็ว', 'Log vertical axis. Shaded band is the recommended range, red dashes the upper limit, and the number under each size is velocity.')}</p>
+      <div class="chart" id="chart"></div>
+    </section>
+    <section class="block">
+      <h2>${B('เทียบชนิดท่อที่อัตราไหลเท่ากัน', 'Pipe types at the same flow')}</h2>
+      <p class="hint">${B('ใช้ ε มาตรฐานของแต่ละชนิดท่อและเกณฑ์เดียวกับด้านซ้าย', 'Uses the default ε of each pipe type and the criteria on the left.')}</p>
+      <div class="tw"><table id="cmp"></table></div>
+    </section>
+    <section class="block">
+      <h2>${B('Pump head โดยประมาณ', 'Estimated pump head')}</h2>
+      <p class="hint" id="pumpHint"></p>
+      <fieldset>
+        <div class="row2">
+          <label class="f"><span>${B('ความยาวท่อตรงรวม ไป+กลับ', 'Total straight pipe, supply + return')} (${U('len')})</span><input id="L" type="number" step="any" min="0"></label>
+          <label class="f ol"><span>${B('ความสูงยกน้ำจากอ่างหอผึ่งเย็น', 'Static lift from tower basin')} (${U('len')})</span><input id="stat" type="number" step="any" min="0"></label>
+        </div>
+        <div class="fits">${fitInputs}</div>
+        <div class="fits">
+          ${eqLabel(1, 'Evaporator ของชิลเลอร์', 'Chiller evaporator', 'Condenser ของชิลเลอร์', 'Chiller condenser')}
+          ${eqLabel(2, 'คอยล์ AHU + วาล์วควบคุม', 'AHU coil + control valve', 'หัวฉีดหอผึ่งเย็น', 'Tower spray nozzles')}
+          ${eqLabel(3, 'อื่นๆ เช่น flow meter', 'Other, e.g. flow meter', 'อื่นๆ เช่น flow meter', 'Other, e.g. flow meter')}
+          <label class="f"><span>Safety (%)</span><input id="safety" type="number" step="1" min="0" value="10"></label>
+          <label class="f"><span>${B('ประสิทธิภาพปั๊ม (%)', 'Pump efficiency (%)')}</span><input id="eff" type="number" step="1" min="30" max="95" value="70"></label>
+        </div>
+      </fieldset>
+      <div id="pumpOut"></div>
+    </section>
+    <section class="block notes">
+      <h2>${B('ความเร็วที่เหมาะสมและเกณฑ์ที่ใช้', 'Recommended velocities and criteria')}</h2>
+      <p class="hint">${B('ค่าที่นิยมใช้ในงานออกแบบ น้ำในท่อเหล็ก ใช้เป็นกรอบเริ่มต้นแล้วปรับตาม spec โครงการ', 'Common design values for water in steel pipe. Use as a starting frame and adjust to the project spec.')}</p>
+      <div class="tw"><table class="guide"><thead><tr><th>${B('กรณี', 'Case')}</th><th>SI</th><th>IP</th><th>${B('หมายเหตุ', 'Note')}</th><th>${B('อ้างอิง', 'Ref.')}</th></tr></thead><tbody>${guideRows}</tbody></table></div>
+      <h3>${B('สมมติฐานและข้อจำกัด', 'Assumptions and limits')}</h3>
+      <ul>
+        <li>${B('<b>Friction loss</b> ใช้สมการ Darcy–Weisbach โดยหา friction factor จาก Colebrook–White ที่ Reynolds number จริงของแต่ละขนาดท่อ', '<b>Friction loss</b> uses Darcy–Weisbach with the friction factor from Colebrook–White at the actual Reynolds number of each size.')}</li>
+        <li>${B('<b>คุณสมบัติน้ำ</b> คำนวณที่อุณหภูมิเฉลี่ยของน้ำเข้าและออก ไม่รวมสารผสมกลีคอล', '<b>Water properties</b> are evaluated at the mean of entering and leaving temperature. Glycol mixtures are not included.')}</li>
+        <li>${B('<b>Closed vs Open loop</b> ต่างกันที่ ε ของท่อ ความเร็วต่ำสุด ตัวคูณความร้อนที่ระบาย และ pump head ที่ Open loop ต้องรวมความสูงยกน้ำและหัวฉีด ขณะที่ Closed loop แรงดันสถิตหักล้างกันเอง', '<b>Closed vs open loop</b> differ in pipe roughness, minimum velocity, heat rejection factor, and pump head. Open loop includes static lift and spray nozzles, while closed-loop static head cancels out.')}</li>
+        <li>${B('<b>ข้อต่อและวาล์ว</b> ใช้ K-method ค่า K คงที่ไม่ขึ้นกับขนาดท่อ เหมาะกับการประมาณเบื้องต้น', '<b>Fittings and valves</b> use the K-method with constant K regardless of size. Suitable for early estimates.')}</li>
+        <li>${B('<b>PPR</b> อุณหภูมิและแรงดันใช้งานที่ยอมรับได้ลดลงเมื่ออุณหภูมิสูงขึ้น ตรวจกราฟ derating ของผู้ผลิต โดยเฉพาะฝั่งน้ำหล่อเย็น', '<b>PPR</b> allowable pressure drops as temperature rises. Check the manufacturer derating curve, especially on the condenser side.')}</li>
+        <li>${B('ผลลัพธ์เป็นการประมาณเพื่อช่วยตัดสินใจเบื้องต้น ผู้ออกแบบต้องตรวจสอบตาม spec โครงการและมาตรฐานที่เกี่ยวข้องก่อนใช้งานจริง', 'Results are estimates for early decisions. The designer must verify against the project spec and applicable standards before use.')}</li>
+      </ul>
+    </section>
+    <section class="block refs">
+      <h2>${B('เอกสารอ้างอิง', 'References')}</h2>
+      <h3>${B('Friction Loss – Water Flow Chart', 'Friction Loss – Water Flow Chart')}</h3>
+      <p class="hint" id="flowHint" style="margin:4px 0 8px"></p>
+      <div class="zoomwrap" id="flowWrap">
+        <div id="flowSvg"></div>
+        <div class="zoomctl">
+          <button type="button" id="zIn" title="ซูมเข้า / Zoom in" aria-label="Zoom in">+</button>
+          <button type="button" id="zOut" title="ซูมออก / Zoom out" aria-label="Zoom out">−</button>
+          <button type="button" id="zReset" title="รีเซ็ต / Reset" aria-label="Reset zoom">⟲</button>
+        </div>
+        <span class="zoomlvl" id="zLvl"></span>
+      </div>
+      <p class="mini">${B('กดปุ่ม + − หรือกด Ctrl ค้างแล้วเลื่อนล้อเมาส์เพื่อซูม ลากเพื่อเลื่อนดู บนมือถือใช้สองนิ้วถ่าง/หุบ หรือแตะสองครั้งเพื่อซูมเข้า', 'Use the + − buttons or hold Ctrl and scroll to zoom, then drag to pan. On touch screens pinch, or double-tap to zoom in.')}</p>
+      <h3>${B('รายการอ้างอิง', 'Source list')}</h3>
+      <p class="mini" style="margin:2px 0 6px">${B('ผู้ทำแอปไม่ได้เปิดเอกสารต้นฉบับของ ASHRAE และ Carrier โดยตรง ตัวเลขในตารางความเร็วตรวจเทียบจากบทความสรุปที่ลิงก์ไว้ (เข้าถึง 7 พ.ย. 2569) โปรดตรวจกับเอกสารต้นฉบับก่อนอ้างอิงในงานจริง', 'The primary ASHRAE and Carrier documents were not opened directly. Values in the velocity table were cross-checked against the linked summaries (accessed 7 Nov 2026). Verify against the originals before citing in project work.')}</p>
+      <ol>${refItems}</ol>
+    </section>`;
+
+  // ---------- ตัวเลือกที่ขึ้นกับภาษา ----------
+  function refreshOptions() {
+    $('subtitle').textContent = L('คำนวณอัตราไหล เลือกขนาดท่อ และหา friction loss ของท่อน้ำชิลเลอร์', 'Water flow, pipe size selection and friction loss for chiller piping');
+    document.querySelectorAll('#known button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === state.known)));
+    const us = state.known === 'cap' ? ['TR', 'BTUh', 'kW'] : ['gpm', 'Ls', 'Lmin', 'm3h'];
+    $('unit').innerHTML = us.map((u) => `<button type="button" data-v="${u}" aria-pressed="${u === state.unit}">${UNITLBL[u]}</button>`).join('');
+    const cur = $('mat').value || 'steel40';
+    $('mat').innerHTML = Object.entries(Core.PIPES).map(([k, p]) => `<option value="${k}">${p.name[state.lang]}</option>`).join('');
+    $('mat').value = cur;
+    $('copyBtn').textContent = L('คัดลอกสรุปผล', 'Copy summary');
+    $('epsNote').textContent = state.loop === 'closed'
+      ? L('Closed loop ใช้ ε ของท่อใหม่ (เหล็ก 0.045 มม.)', 'Closed loop uses new-pipe roughness (steel 0.045 mm)')
+      : L('Open loop เติมออกซิเจนต่อเนื่อง ท่อเหล็กเป็นสนิมและตะกรัน จึงใช้ ε ของท่อใช้งานแล้ว (0.15 มม.)', 'Open loop takes in oxygen continuously, so steel corrodes and scales. Aged-pipe roughness is used (0.15 mm)');
+    $('valLbl').textContent = (state.known === 'cap' ? L('ขนาดทำความเย็น', 'Cooling capacity') : L('อัตราไหลน้ำ', 'Water flow'));
+  }
+  function refreshUnits() {
+    document.querySelectorAll('[data-u]').forEach((e) => { e.textContent = KIND[e.dataset.u][state.sys]; });
+  }
+  function setLoopTabs() {
+    document.querySelectorAll('#loopTabs button').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.loop === state.loop)));
+    document.querySelectorAll('#sysSeg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.sys === state.sys)));
+    document.querySelectorAll('#langSeg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === state.lang)));
+    $('root').dataset.loop = state.loop; $('root').dataset.lang = state.lang;
+    document.documentElement.lang = state.lang;
+  }
+
+  function applyLoop(loop, first) {
+    state.loop = loop;
+    const d = DEF[loop];
+    setSI('tin', d.tin); setSI('tout', d.tout); $('hf').value = d.hf; setSI('vmin', d.vmin);
+    setSI('L', d.L); setSI('stat', d.stat);
+    d.eq.forEach((v, i) => setSI('eq' + (i + 1), v));
+    Core.FITTINGS.forEach((f) => { $('k_' + f.key).value = d.counts[f.key]; });
+    setSI('eps', Core.PIPES[$('mat').value].eps[loop]);
+    setLoopTabs(); refreshOptions();
+    if (!first) update();
+  }
+
+  // ---------- กราฟ friction ตามขนาดท่อ ----------
+  function renderChart(res, sel, crit) {
+    let rows = res.filter((r) => r.v >= 0.25 && r.v <= 5.5);
+    if (rows.length < 2) rows = res.slice(Math.max(0, res.indexOf(sel) - 3), res.indexOf(sel) + 4);
+    const W = 640, H = 270, ml = 56, mr = 16, mt = 14, mb = 48;
+    const fmin = Math.max(crit.fmin, 1);
+    const all = rows.map((r) => dFric(r.dp)).concat([dFric(crit.fmax), dFric(fmin)]);
+    let lo = Math.floor(Math.log10(Math.min(...all))), hi = Math.ceil(Math.log10(Math.max(...all)));
+    if (hi === lo) hi += 1;
+    const y = (d) => mt + (H - mt - mb) * (1 - (Math.log10(dFric(d)) - lo) / (hi - lo));
+    const x = (i) => ml + (W - ml - mr) * (rows.length === 1 ? 0.5 : i / (rows.length - 1));
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${L('กราฟ friction loss เทียบขนาดท่อ', 'Friction loss against pipe size')}">`;
+    for (let k = lo; k <= hi; k++) {
+      const v = Math.pow(10, k), yy = mt + (H - mt - mb) * (1 - (k - lo) / (hi - lo));
+      s += `<line class="g-line" x1="${ml}" x2="${W - mr}" y1="${yy}" y2="${yy}"/><text class="g-t" x="${ml - 8}" y="${yy + 4}" text-anchor="end">${v >= 1000 ? v / 1000 + 'k' : +v.toPrecision(3)}</text>`;
+    }
+    s += `<text class="g-t" x="${ml - 8}" y="${mt - 3}" text-anchor="end">${uFric()}</text>`;
+    if (fmin < crit.fmax) s += `<rect class="g-band" x="${ml}" y="${y(crit.fmax)}" width="${W - ml - mr}" height="${y(fmin) - y(crit.fmax)}"/>`;
+    s += `<line class="g-lim" x1="${ml}" x2="${W - mr}" y1="${y(crit.fmax)}" y2="${y(crit.fmax)}"/>`;
+    s += `<text class="g-t bad" x="${W - mr}" y="${y(crit.fmax) - 5}" text-anchor="end">${L('สูงสุด', 'max')} ${fFric(crit.fmax)}</text>`;
+    s += `<polyline class="g-path" points="${rows.map((r, i) => `${x(i)},${y(r.dp)}`).join(' ')}"/>`;
+    rows.forEach((r, i) => {
+      s += `<circle class="s-${r.status}" cx="${x(i)}" cy="${y(r.dp)}" r="4.5"/>`;
+      if (r === sel) s += `<circle class="g-ring" cx="${x(i)}" cy="${y(r.dp)}" r="9"/>`;
+      s += `<text class="g-t${r === sel ? ' b' : ''}" x="${x(i)}" y="${H - 28}" text-anchor="middle">${r.row.label}</text>`;
+      s += `<text class="g-t${r.v > r.vmax ? ' bad' : ''}" x="${x(i)}" y="${H - 14}" text-anchor="middle">${fmt(dVel(r.v), 1)}</text>`;
+    });
+    s += `<text class="g-t" x="${ml - 8}" y="${H - 14}" text-anchor="end">${uVel()}</text></svg>`;
+    $('chart').innerHTML = s;
+  }
+
+  // ---------- กราฟ Friction Loss – Water Flow ----------
+  function renderFlowChart(c) {
+    const { pipe, eps, props, crit, sel, Q } = c;
+    const IP = ip();
+    const W = 860, H = 560, ml = 66, mr = 74, mt = 18, mb = 54;
+    const xlo = IP ? 0 : -1, xhi = IP ? 4 : 3, ylo = IP ? -2 : 0, yhi = IP ? 2 : 4;
+    const dQ = (q) => (IP ? q / Core.GPM_M3S : q * 1000);
+    const lx = (q) => Math.log10(dQ(q)), ly = (dp) => Math.log10(dFric(dp));
+    const X = (q) => ml + (W - ml - mr) * ((lx(q) - xlo) / (xhi - xlo));
+    const Y = (dp) => mt + (H - mt - mb) * (1 - (ly(dp) - ylo) / (yhi - ylo));
+    const inR = (q, dp) => lx(q) >= xlo && lx(q) <= xhi && ly(dp) >= ylo && ly(dp) <= yhi;
+    const dpOf = (row, v) => {
+      const D = row.id / 1000, Re = props.rho * v * D / props.mu, f = Core.fDarcy(Re, eps / row.id);
+      return f / D * props.rho * v * v / 2;
+    };
+    const areaOf = (row) => Math.PI * Math.pow(row.id / 1000, 2) / 4;
+    const tick = (v) => (v >= 1000 ? (v / 1000) + 'k' : +v.toPrecision(3));
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Friction loss - water flow chart">`;
+    // grid
+    for (let k = xlo; k <= xhi; k++) {
+      for (const m of [1, 2, 3, 5]) {
+        if (k === xhi && m > 1) continue;
+        const xx = ml + (W - ml - mr) * ((k + Math.log10(m) - xlo) / (xhi - xlo));
+        s += `<line class="${m === 1 ? 'g-line' : 'g-minor'}" x1="${xx}" x2="${xx}" y1="${mt}" y2="${H - mb}"/>`;
+        if (m === 1) s += `<text class="g-t" x="${xx}" y="${H - mb + 16}" text-anchor="middle">${tick(Math.pow(10, k))}</text>`;
+      }
+    }
+    for (let k = ylo; k <= yhi; k++) {
+      for (const m of [1, 2, 3, 5]) {
+        if (k === yhi && m > 1) continue;
+        const yy = mt + (H - mt - mb) * (1 - ((k + Math.log10(m) - ylo) / (yhi - ylo)));
+        s += `<line class="${m === 1 ? 'g-line' : 'g-minor'}" x1="${ml}" x2="${W - mr}" y1="${yy}" y2="${yy}"/>`;
+        if (m === 1) s += `<text class="g-t" x="${ml - 8}" y="${yy + 4}" text-anchor="end">${tick(Math.pow(10, k))}</text>`;
+      }
+    }
+    // recommended band and limit
+    const fmin = Math.max(crit.fmin, 1e-6);
+    const yMax = Y(crit.fmax), yMin = Y(fmin);
+    if (fmin < crit.fmax && yMax < H - mb && yMin > mt) s += `<rect class="g-band" x="${ml}" y="${Math.max(yMax, mt)}" width="${W - ml - mr}" height="${Math.min(yMin, H - mb) - Math.max(yMax, mt)}"/>`;
+    if (yMax > mt && yMax < H - mb) {
+      s += `<line class="g-lim" x1="${ml}" x2="${W - mr}" y1="${yMax}" y2="${yMax}"/>`;
+      s += `<text class="g-t bad" x="${W - mr - 4}" y="${yMax - 5}" text-anchor="end">${L('ΔP สูงสุด', 'max ΔP')} ${fFric(crit.fmax)} ${uFric()}</text>`;
+    }
+    // velocity lines
+    const vl = (IP ? [2, 4, 6, 8, 10, 15] : [0.6, 1.2, 1.8, 2.4, 3.0, 4.5]).map((v) => ({ v: IP ? v * 0.3048 : v, lbl: v }));
+    vl.forEach((o) => {
+      const pts = pipe.rows.map((r) => [areaOf(r) * o.v, dpOf(r, o.v)]).filter((p) => inR(p[0], p[1]));
+      if (pts.length < 2) return;
+      s += `<polyline class="g-vel" points="${pts.map((p) => `${X(p[0]).toFixed(1)},${Y(p[1]).toFixed(1)}`).join(' ')}"/>`;
+      const e = pts[pts.length - 1];
+      s += `<text class="g-t vel" x="${Math.min(X(e[0]) + 4, W - mr + 2)}" y="${Y(e[1]) - 4}">${o.lbl} ${uVel()}</text>`;
+    });
+    // pipe curves
+    const showInch = IP && pipe.rows[0].alt.indexOf('"') >= 0;
+    pipe.rows.forEach((r) => {
+      const A = areaOf(r), pts = [];
+      for (let i = 0; i <= 28; i++) {
+        const v = 0.3 * Math.pow(5 / 0.3, i / 28);
+        const q = A * v, dp = dpOf(r, v);
+        if (inR(q, dp)) pts.push([q, dp]);
+      }
+      if (pts.length < 2) return;
+      const isSel = sel && r === sel.row;
+      s += `<polyline class="g-pipe${isSel ? ' sel' : ''}" points="${pts.map((p) => `${X(p[0]).toFixed(1)},${Y(p[1]).toFixed(1)}`).join(' ')}"/>`;
+      const e = pts[pts.length - 1];
+      s += `<text class="g-t${isSel ? ' acc' : ' b'}" x="${X(e[0]) + 3}" y="${Y(e[1]) - 5}">${showInch ? r.alt : r.label}</text>`;
+    });
+    // design point
+    if (sel && inR(Q, sel.dp)) {
+      s += `<line class="g-cross" x1="${X(Q)}" x2="${X(Q)}" y1="${Y(sel.dp)}" y2="${H - mb}"/><line class="g-cross" x1="${ml}" x2="${X(Q)}" y1="${Y(sel.dp)}" y2="${Y(sel.dp)}"/>`;
+      s += `<circle class="g-dot" cx="${X(Q)}" cy="${Y(sel.dp)}" r="5"/><circle class="g-ring" cx="${X(Q)}" cy="${Y(sel.dp)}" r="10"/>`;
+      const right = X(Q) < W - mr - 190;
+      s += `<text class="g-t acc" x="${X(Q) + (right ? 14 : -14)}" y="${Y(sel.dp) + 18}" text-anchor="${right ? 'start' : 'end'}">${L('จุดออกแบบ', 'Design point')}: ${fmt(IP ? Q / Core.GPM_M3S : Q * 1000, IP ? 0 : 1)} ${IP ? 'gpm' : 'L/s'}, ${fFric(sel.dp)} ${uFric()}</text>`;
+    }
+    s += `<text class="g-t ttl" x="${(ml + W - mr) / 2}" y="${H - 8}" text-anchor="middle">${L('อัตราไหล', 'Flow')} (${IP ? 'US gpm' : 'L/s'})</text>`;
+    s += `<text class="g-t ttl" transform="translate(16 ${(mt + H - mb) / 2}) rotate(-90)" text-anchor="middle">Friction loss (${uFric()})</text></svg>`;
+    $('flowSvg').innerHTML = s; applyVB();
+    $('flowHint').textContent = L(
+      `${pipe.name.th} · ε ${fmt(IP ? eps / 25.4 : eps, IP ? 5 : 4)} ${IP ? 'in' : 'มม.'} · น้ำที่ ${fmt(c.Tm, 1)} °C · เส้นทึบคือขนาดท่อ เส้นประส้มคือความเร็วคงที่ แถบสีคือช่วง friction ที่แนะนำ`,
+      `${pipe.name.en} · ε ${fmt(IP ? eps / 25.4 : eps, IP ? 5 : 4)} ${IP ? 'in' : 'mm'} · water at ${fmt(c.Tm, 1)} °C · solid lines are pipe sizes, orange dashes are constant velocity, shaded band is the recommended friction range`);
+  }
+
+  const STATUS = () => ({ ok: L('เหมาะสม', 'Suitable'), near: L('ใกล้เกณฑ์', 'Near limit'), over: L('เล็กเกินไป', 'Too small'), low: L('ใหญ่เกินไป', 'Too large') });
+
+  function update() {
+    refreshUnits();
+    const loop = state.loop, mat = $('mat').value;
+    const known = state.known, unit = state.unit;
+    const val = num('val'), tin = getSI('tin'), tout = getSI('tout'), eps = getSI('eps');
+    const dt = tout - tin;
+    const hf = loop === 'open' && known === 'cap' ? num('hf') : 1;
+    $('dtro').innerHTML = isFinite(dt)
+      ? `ΔT = <b>${fmt(dt, 2)} K</b> (${fmt(dt * 1.8, 2)} °F) · ${L('T เฉลี่ย', 'mean T')} ${fmt((tin + tout) / 2, 1)} °C`
+      : '';
+    $('hfWrap').hidden = !(loop === 'open' && known === 'cap');
+
+    const crit = {
+      vmin: getSI('vmin'), fmax: getSI('fmax'), fmin: getSI('fmin'),
+      tiers: [{ maxDN: 50, v: getSI('v1') }, { maxDN: 100, v: getSI('v2') }, { maxDN: 200, v: getSI('v3') }, { maxDN: 1e9, v: getSI('v4') }]
+    };
+    const bad = !(val > 0) || !(dt > 0) || !isFinite(tin) || !(eps > 0) || !(hf >= 1) ||
+      [crit.vmin, crit.fmax, crit.fmin, ...crit.tiers.map((t) => t.v)].some((v) => !isFinite(v));
+    if (bad) {
+      $('summary').innerHTML = `<div class="block empty">${isFinite(dt) && dt <= 0
+        ? L('อุณหภูมิน้ำออกต้องสูงกว่าน้ำเข้า', 'Leaving temperature must be higher than entering temperature')
+        : L('กรอกค่าให้ครบและมากกว่าศูนย์เพื่อเริ่มคำนวณ', 'Fill in all fields with values above zero to calculate')}</div>`;
+      ['tbl', 'cmp', 'pumpOut', 'chart', 'flowSvg', 'dock'].forEach((id) => { $(id).innerHTML = ''; });
+      return;
+    }
+
+    const fl = Core.flowFromLoad({ mode: unit, value: val, loop, dT: dt, Tsup: tin, heatFactor: hf });
+    const pipe = Core.PIPES[mat];
+    const res = Core.evaluateSizes(pipe.rows, fl.Q, fl.props, eps, crit);
+    const { sel, note } = Core.recommend(res);
+    const next = res[res.indexOf(sel) + 1];
+    const coolKW = known === 'cap' ? (unit === 'TR' ? val * Core.TR_KW : unit === 'BTUh' ? val * Core.BTUH_KW : val) : (loop === 'open' ? fl.kW / (num('hf') || 1) : fl.kW);
+    state.last = { Q: fl.Q, coolKW };
+    const IP = ip();
+
+    // --- สรุป ---
+    const Qs = fl.Q * 1000, Qh = fl.Q * 3600, Qg = fl.Q / Core.GPM_M3S;
+    const flowBig = IP ? `${fmt(Qg, dg(Qg))}<i>US gpm</i>` : `${fmt(Qs, dg(Qs))}<i>L/s</i>`;
+    const flowSub = IP ? `${fmt(Qs, dg(Qs))} L/s · ${fmt(Qh, dg(Qh))} m³/h` : `${fmt(Qg, dg(Qg))} US gpm · ${fmt(Qh, dg(Qh))} m³/h`;
+    const perTR = fmt(Qg / (fl.kW / (loop === 'open' ? 1 : 1) / Core.TR_KW), 2);
+    const heatLine = loop === 'open'
+      ? L(`ความร้อนที่ระบาย ${fmt(fl.kW, dk(fl.kW))} kW (${fmt(fl.kW / Core.TR_KW, 0)} TR)`, `Heat rejection ${fmt(fl.kW, dk(fl.kW))} kW (${fmt(fl.kW / Core.TR_KW, 0)} TR)`)
+      : L(`โหลด ${fmt(fl.kW, dk(fl.kW))} kW`, `Load ${fmt(fl.kW, dk(fl.kW))} kW`);
+    const capLine = `${fmt(coolKW / Core.TR_KW, 1)} TR · ${fmt(coolKW, dk(coolKW))} kW · ${fmt(coolKW / Core.BTUH_KW, 0)} BTU/h`;
+    const mdot = fl.Q * fl.props.rho;
+    const formula = known === 'cap'
+      ? `${fmt(fl.kW, dk(fl.kW))} kW ÷ (${fmt(fl.props.cp, 3)} kJ/kg·K × ${fmt(dt, 2)} K) = ${fmt(mdot, dg(mdot))} kg/s ÷ ${fmt(fl.props.rho, 1)} kg/m³`
+      : L('ใช้อัตราไหลที่ระบุ ไม่ต้องคำนวณจากโหลด', 'Flow entered directly, no load calculation');
+    const qpt = fl.kW > 0 ? `${fmt(Qg / (coolKW / Core.TR_KW), 2)} gpm/TR · ${fmt(Qs / (coolKW / Core.TR_KW), 3)} L/s·TR` : '';
+    let alert = '';
+    if (note === 'lowflow') alert = `<div class="alert">${L(`อัตราไหลต่ำมาก ขนาดเล็กกว่านี้ความเร็วเกินเกณฑ์ ขนาดนี้เป็นขนาดที่ใกล้เคียงที่สุดแต่ความเร็วต่ำกว่า ${fmt(dVel(crit.vmin), 2)} ${uVel()}`, `Very low flow. Smaller sizes exceed the limits, so this is the closest size, but velocity is below ${fmt(dVel(crit.vmin), 2)} ${uVel()}`)}</div>`;
+    if (note === 'toolarge') alert = `<div class="alert bad">${L('อัตราไหลเกินความสามารถของท่อขนาดใหญ่สุดของชนิดนี้ที่เกณฑ์ปัจจุบัน ควรแยกเป็นท่อขนานหลายเส้น หรือเลือกชนิดท่ออื่น', 'Flow exceeds the largest size of this pipe type at the current criteria. Use parallel pipes or choose another pipe type.')}</div>`;
+    const idTxt = IP ? `${fmt(sel.row.id / 25.4, 2)} in` : `${fmt(sel.row.id, 1)} mm`;
+    const rho = IP ? `${fmt(fl.props.rho * 0.062428, 2)} lb/ft³` : `${fmt(fl.props.rho, 1)} kg/m³`;
+    const cpTxt = IP ? `${fmt(fl.props.cp * 0.238846, 3)} Btu/lb·°F` : `${fmt(fl.props.cp, 3)} kJ/kg·K`;
+    $('summary').innerHTML = `
+      <div class="kpis">
+        <div class="kpi"><span class="lbl">${L('ปริมาณน้ำที่ต้องใช้', 'Required water flow')}</span>
+          <b class="big">${flowBig}</b>
+          <span class="sm">${flowSub}</span>
+          <span class="sm m">${known === 'cap' ? capLine : ''}</span>
+          <span class="sm m">${heatLine} · ${qpt}</span>
+          <span class="sm m">${formula}</span></div>
+        <div class="kpi rec"><span class="lbl">${L('ขนาดท่อที่แนะนำ (เล็กที่สุดที่ผ่านเกณฑ์)', 'Recommended size (smallest that passes)')}</span>
+          <b class="big">${sel.row.label}<i>${sel.row.alt}</i></b>
+          <span class="sm">ID ${idTxt} · v ${fmt(dVel(sel.v))} ${uVel()}</span>
+          <span class="sm">${fFric(sel.dp)} ${uFric()} · ${fFricAlt(sel.dp)} ${uFricAlt()}</span>
+          <span class="sm m">${next ? L(`ใหญ่ขึ้น 1 ขนาด ${next.row.label}: v ${fmt(dVel(next.v))} ${uVel()} · ${fFric(next.dp)} ${uFric()}`, `One size up ${next.row.label}: v ${fmt(dVel(next.v))} ${uVel()} · ${fFric(next.dp)} ${uFric()}`) : ''}</span></div>
+        <div class="kpi"><span class="lbl">${L('คุณสมบัติน้ำที่', 'Water properties at')} ${fmt(IP ? fl.Tm * 1.8 + 32 : fl.Tm, 1)} ${IP ? '°F' : '°C'}</span>
+          <span class="sm">ρ ${rho}</span>
+          <span class="sm">μ ${fmt(fl.props.mu * 1000, 3)} ${IP ? 'cP' : 'mPa·s'}</span>
+          <span class="sm">cp ${cpTxt}</span></div>
+      </div>${alert}`;
+
+    $('dock').innerHTML = `<div><span>${L('ปริมาณน้ำ', 'Flow')}</span><b>${IP ? fmt(Qg, dg(Qg)) + ' gpm' : fmt(Qs, dg(Qs)) + ' L/s'}</b></div>` +
+      `<div><span>${L('ท่อแนะนำ', 'Pipe')}</span><b>${sel.row.label}</b></div>` +
+      `<div><span>v · ΔP</span><b>${fmt(dVel(sel.v), 1)} ${uVel()} · ${fFric(sel.dp)}</b></div>` +
+      `<div class="go"><b aria-hidden="true">↓</b><span>${L('ตารางขนาดท่อ', 'Size table')}</span></div>`;
+
+    // --- ตารางขนาดท่อ ---
+    const shown = res.filter((r) => state.showAll || (r.v >= 0.2 && r.v <= 5.5) || r === sel);
+    const ST = STATUS();
+    $('tblHint').textContent = `${pipe.name[state.lang]} · ε ${fmt(IP ? eps / 25.4 : eps, IP ? 5 : 4)} ${IP ? 'in' : 'mm'} · ${L('ΔP สูงสุด', 'max ΔP')} ${fFric(crit.fmax)} ${uFric()} · ${L('v ต่ำสุด', 'min v')} ${fmt(dVel(crit.vmin), 2)} ${uVel()}`;
+    $('tbl').innerHTML = `<thead><tr><th>${L('ขนาด', 'Size')}</th><th>ID (${IP ? 'in' : 'mm'})</th><th>v (${uVel()})</th><th>ΔP (${uFric()})</th><th>ΔP (${uFricAlt()})</th><th>Re</th><th>${L('สถานะ', 'Status')}</th></tr></thead><tbody>` +
+      shown.map((r) => {
+        const vC = r.v > r.vmax ? 'bad' : r.v < crit.vmin ? 'warn' : '';
+        const dC = r.dp > crit.fmax ? 'bad' : '';
+        return `<tr class="${r === sel ? 'rec' : ''}"><td>${r.row.label} <span style="color:var(--muted)">${r.row.alt}</span></td><td>${IP ? fmt(r.row.id / 25.4, 2) : fmt(r.row.id, 1)}</td>` +
+          `<td class="${vC}">${fmt(dVel(r.v))}</td><td class="${dC}">${fFric(r.dp)}</td><td class="dim">${fFricAlt(r.dp)}</td>` +
+          `<td>${(r.Re / 1000).toFixed(0)}k</td><td><span class="pill ${r.status}">${ST[r.status]}</span>${r === sel ? ' ◀' : ''}</td></tr>`;
+      }).join('') + '</tbody>';
+
+    renderChart(res, sel, crit);
+
+    // --- เทียบชนิดท่อ ---
+    $('cmp').innerHTML = `<thead><tr><th>${L('ชนิดท่อ', 'Pipe type')}</th><th>${L('ขนาดแนะนำ', 'Size')}</th><th>ID (${IP ? 'in' : 'mm'})</th><th>v (${uVel()})</th><th>ΔP (${uFric()})</th><th>ε (${IP ? 'in' : 'mm'})</th></tr></thead><tbody>` +
+      Object.entries(Core.PIPES).map(([k, p]) => {
+        const e = p.eps[loop];
+        const r = Core.recommend(Core.evaluateSizes(p.rows, fl.Q, fl.props, e, crit));
+        const s = r.sel;
+        const warn = r.note === 'toolarge' ? ` <span class="pill over">${L('เกินตาราง', 'Out of range')}</span>` : r.note === 'lowflow' ? ` <span class="pill near">${L('v ต่ำ', 'Low v')}</span>` : '';
+        return `<tr class="${k === mat ? 'cur' : ''}"><td>${p.short[state.lang]}</td><td>${s.row.label}${warn}</td><td>${IP ? fmt(s.row.id / 25.4, 2) : fmt(s.row.id, 1)}</td><td>${fmt(dVel(s.v))}</td><td>${fFric(s.dp)}</td><td>${IP ? fmt(e / 25.4, 5) : e}</td></tr>`;
+      }).join('') + '</tbody>';
+
+    // --- Pump head ---
+    const sumK = Core.FITTINGS.reduce((a, f) => a + f.K * (num('k_' + f.key) || 0), 0);
+    const equip = ['eq1', 'eq2', 'eq3'].reduce((a, id) => a + (getSI(id) || 0), 0);
+    const Lm = getSI('L') || 0;
+    const ph = Core.pumpHead({
+      dpdl: sel.dp, L: Lm, sumK, v: sel.v, rho: fl.props.rho, equipKPa: equip,
+      staticM: loop === 'open' ? (getSI('stat') || 0) : 0, safety: num('safety') || 0,
+      eff: Math.min(Math.max((num('eff') || 70) / 100, 0.3), 0.95), Q: fl.Q
+    });
+    $('pumpHint').textContent = loop === 'open'
+      ? L(`คำนวณกับท่อขนาด ${sel.row.label} · รวมความสูงยกน้ำและหัวฉีดหอผึ่งเย็น`, `Based on ${sel.row.label} pipe · includes static lift and tower spray nozzles`)
+      : L(`คำนวณกับท่อขนาด ${sel.row.label} · ระบบปิดไม่นับแรงดันสถิต`, `Based on ${sel.row.label} pipe · closed system, static head not counted`);
+    const P = (kpa) => (IP ? kpa * 0.145038 : kpa), uP = IP ? 'psi' : 'kPa';
+    const parts = [
+      ['c1', L('ท่อตรง', 'Straight pipe'), ph.pipe], ['c2', L('ข้อต่อ/วาล์ว', 'Fittings/valves'), ph.fit], ['c3', L('อุปกรณ์', 'Equipment'), ph.equip],
+      ['c4', L('ความสูงยกน้ำ', 'Static lift'), ph.stat], ['c5', 'Safety', ph.total - ph.sub]
+    ].filter((p) => p[2] > 0.0001);
+    $('pumpOut').innerHTML = `
+      <div class="phead">
+        <div><span class="lbl">${L('แรงดันรวมที่ปั๊มต้องสร้าง', 'Total pump pressure')}</span><b class="big">${fmt(P(ph.total), IP ? 1 : 0)}<i>${uP}</i></b></div>
+        <div><span class="lbl">Pump head</span><b class="big">${fmt(IP ? ph.head / 0.3048 : ph.head, 1)}<i>${IP ? 'ft' : 'm'}</i></b></div>
+        <div><span class="lbl">${L('กำลังเพลาโดยประมาณ', 'Approx. shaft power')}</span><b class="big">${fmt(IP ? ph.shaftKW * 1.34102 : ph.shaftKW, 1)}<i>${IP ? 'hp' : 'kW'}</i></b></div>
+      </div>
+      <div class="stack" role="img" aria-label="${L('สัดส่วนแรงดันสูญเสีย', 'Pressure loss share')}">${parts.map((p) => `<span class="${p[0]}" style="width:${(p[2] / ph.total * 100).toFixed(2)}%"></span>`).join('')}</div>
+      <div class="legend">${parts.map((p) => `<span><i class="${p[0]}"></i>${p[1]} ${fmt(P(p[2]), 1)} ${uP}</span>`).join('')}</div>
+      <p class="mini">ΣK = ${fmt(sumK, 2)} · ${fFric(sel.dp)} ${uFric()} × ${fmt(IP ? Lm / 0.3048 : Lm, 0)} ${IP ? 'ft' : 'm'}</p>`;
+
+    // --- กราฟอ้างอิง ---
+    renderFlowChart({ pipe, eps, props: fl.props, crit, sel, Q: fl.Q, Tm: fl.Tm });
+
+    state.text = [
+      `Pipe Calculator: ${loop === 'closed' ? 'Closed loop (CHW)' : 'Open loop (CW)'}`,
+      `${L('อัตราไหล', 'Flow')} ${fmt(Qg, dg(Qg))} US gpm = ${fmt(Qs, dg(Qs))} L/s = ${fmt(Qh, dg(Qh))} m³/h (ΔT ${fmt(dt, 2)} K, ${fmt(tin, 1)} → ${fmt(tout, 1)} °C)`,
+      `${pipe.name[state.lang]}, ε ${fmt(eps, 4)} mm`,
+      `${L('ขนาดแนะนำ', 'Recommended')} ${sel.row.label} (${sel.row.alt}), ID ${fmt(sel.row.id, 1)} mm, v ${fmt(sel.v)} m/s (${fmt(sel.v / 0.3048)} ft/s), ΔP ${fmt(sel.dp, 0)} Pa/m (${fmt(sel.dp / 98.06, 2)} ft/100ft)`
+    ].join('\n');
+  }
+
+  // ---------- ซูม/เลื่อนกราฟอ้างอิง ----------
+  const FW = 860, FH = 560, vb = { x: 0, y: 0, w: FW, h: FH };
+  const zwrap = $('flowWrap');
+  function applyVB() {
+    const svg = zwrap.querySelector('svg');
+    if (svg) svg.setAttribute('viewBox', `${vb.x.toFixed(1)} ${vb.y.toFixed(1)} ${vb.w.toFixed(1)} ${vb.h.toFixed(1)}`);
+    zwrap.classList.toggle('zoomed', vb.w < FW - 0.5);
+    $('zLvl').textContent = vb.w < FW - 0.5 ? `${fmt(FW / vb.w, 1)}×` : '';
+  }
+  function clampVB() {
+    vb.w = Math.min(FW, Math.max(FW / 10, vb.w)); vb.h = vb.w * FH / FW;
+    vb.x = Math.min(Math.max(0, vb.x), FW - vb.w); vb.y = Math.min(Math.max(0, vb.y), FH - vb.h);
+  }
+  function zoomAt(f, fx, fy) {
+    const px = vb.x + vb.w * fx, py = vb.y + vb.h * fy;
+    vb.w = vb.w / f; vb.h = vb.w * FH / FW;
+    vb.x = px - vb.w * fx; vb.y = py - vb.h * fy;
+    clampVB(); applyVB();
+  }
+  function resetZoom() { vb.x = 0; vb.y = 0; vb.w = FW; vb.h = FH; applyVB(); }
+  const frac = (cx, cy) => {
+    const r = zwrap.querySelector('svg').getBoundingClientRect();
+    return [Math.min(1, Math.max(0, (cx - r.left) / (r.width || 1))), Math.min(1, Math.max(0, (cy - r.top) / (r.height || 1))), r];
+  };
+  $('zIn').addEventListener('click', () => zoomAt(1.5, 0.5, 0.5));
+  $('zOut').addEventListener('click', () => zoomAt(1 / 1.5, 0.5, 0.5));
+  $('zReset').addEventListener('click', resetZoom);
+  zwrap.addEventListener('wheel', (e) => {
+    if (!(e.ctrlKey || e.metaKey) || !zwrap.querySelector('svg')) return;
+    e.preventDefault();
+    const [fx, fy] = frac(e.clientX, e.clientY);
+    zoomAt(e.deltaY < 0 ? 1.2 : 1 / 1.2, fx, fy);
+  }, { passive: false });
+  zwrap.addEventListener('dblclick', (e) => {
+    if (e.target.closest('.zoomctl') || !zwrap.querySelector('svg')) return;
+    const [fx, fy] = frac(e.clientX, e.clientY); zoomAt(2, fx, fy);
+  });
+  const ptrs = new Map();
+  zwrap.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('.zoomctl')) return;
+    ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    try { zwrap.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  zwrap.addEventListener('pointermove', (e) => {
+    const prev = ptrs.get(e.pointerId); if (!prev || !zwrap.querySelector('svg')) return;
+    const cur = { x: e.clientX, y: e.clientY };
+    const r = zwrap.querySelector('svg').getBoundingClientRect();
+    if (ptrs.size === 1) {
+      if (vb.w < FW) { vb.x -= (cur.x - prev.x) * vb.w / r.width; vb.y -= (cur.y - prev.y) * vb.h / r.height; clampVB(); applyVB(); }
+    } else if (ptrs.size === 2) {
+      const other = [...ptrs.entries()].find((p) => p[0] !== e.pointerId)[1];
+      const d0 = Math.hypot(prev.x - other.x, prev.y - other.y), d1 = Math.hypot(cur.x - other.x, cur.y - other.y);
+      if (d0 > 0) { const [fx, fy] = frac((cur.x + other.x) / 2, (cur.y + other.y) / 2); zoomAt(d1 / d0, fx, fy); }
+    }
+    ptrs.set(e.pointerId, cur);
+  });
+  ['pointerup', 'pointercancel'].forEach((n) => zwrap.addEventListener(n, (e) => { ptrs.delete(e.pointerId); }));
+
+  // ---------- events ----------
+  document.querySelectorAll('#loopTabs button').forEach((b) => b.addEventListener('click', () => applyLoop(b.dataset.loop)));
+  document.querySelectorAll('#langSeg button').forEach((b) => b.addEventListener('click', () => {
+    state.lang = b.dataset.lang; try { localStorage.setItem('cps.lang', state.lang); } catch (e) {}
+    setLoopTabs(); refreshOptions(); update();
+  }));
+  document.querySelectorAll('#sysSeg button').forEach((b) => b.addEventListener('click', () => {
+    const to = b.dataset.sys; if (to === state.sys) return;
+    const from = state.sys;
+    Object.entries(FIELDS).forEach(([id, kind]) => {
+      const v = parseFloat($(id).value);
+      if (isFinite(v)) $(id).value = String(convertDisplay(kind, v, from, to));
+    });
+    state.sys = to; try { localStorage.setItem('cps.sys', to); } catch (e) {}
+    setLoopTabs(); resetZoom(); update();
+  }));
+  $('mat').addEventListener('change', () => { setSI('eps', Core.PIPES[$('mat').value].eps[state.loop]); update(); });
+  $('known').addEventListener('click', (e) => {
+    const bt = e.target.closest('button'); if (!bt || bt.dataset.v === state.known) return;
+    state.known = bt.dataset.v;
+    state.unit = state.known === 'cap' ? 'TR' : 'gpm';
+    if (state.last) {
+      const v = state.known === 'cap' ? state.last.coolKW / CAPBASE[state.unit] : state.last.Q / FLOWBASE[state.unit];
+      $('val').value = String(+v.toPrecision(6));
+    }
+    refreshOptions(); update();
+  });
+  $('unit').addEventListener('click', (e) => {
+    const bt = e.target.closest('button'); if (!bt || bt.dataset.v === state.unit) return;
+    const nu = bt.dataset.v, ou = state.unit, v = parseFloat($('val').value);
+    const base = state.known === 'cap' ? CAPBASE : FLOWBASE;
+    // แปลงจากค่าจริงที่คำนวณล่าสุด เพื่อไม่ให้ค่าคลาดจากการปัดซ้ำ
+    if (state.last) $('val').value = String(+((state.known === 'cap' ? state.last.coolKW : state.last.Q) / base[nu]).toPrecision(6));
+    else if (isFinite(v)) $('val').value = String(+(v * base[ou] / base[nu]).toPrecision(6));
+    state.unit = nu; refreshOptions(); update();
+  });
+  const gotoTable = () => {
+    const el = $('sizeBlock');
+    const calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    el.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' });
+  };
+  $('dock').addEventListener('click', gotoTable);
+  $('dock').addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); gotoTable(); } });
+  $('showAll').addEventListener('change', (e) => { state.showAll = e.target.checked; update(); });
+  document.querySelectorAll('input[type=number]').forEach((i) => i.addEventListener('input', update));
+  $('copyBtn').addEventListener('click', async () => {
+    const b = $('copyBtn');
+    try { await navigator.clipboard.writeText(state.text || ''); b.textContent = L('คัดลอกแล้ว', 'Copied'); }
+    catch (e) { b.textContent = L('คัดลอกไม่ได้ ลองเลือกข้อความเอง', 'Copy failed, select the text manually'); }
+    setTimeout(() => { b.textContent = L('คัดลอกสรุปผล', 'Copy summary'); }, 1800);
+  });
+
+  // ค่าเริ่มต้นของเกณฑ์
+  setSI('v1', 1.2); setSI('v2', 1.8); setSI('v3', 2.4); setSI('v4', 3.0); setSI('fmax', 400); setSI('fmin', 100);
+  $('mat').innerHTML = '<option value="steel40"></option>';
+  applyLoop('closed', true);
+  setLoopTabs();
+  update();
+})();
+</script>
+
+<script>
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol) && !window.Capacitor) {
+  window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+}
+</script>
+</body>
+</html>
